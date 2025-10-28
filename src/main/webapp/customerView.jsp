@@ -1,10 +1,4 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: lehuy
-  Date: 10/22/2025
-  Time: 12:23 PM
-  To change this template use File | Settings | File Templates.
---%>
+
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%
     HttpSession currentSession = request.getSession(false);
@@ -18,12 +12,14 @@
 %>
 <html>
 <head>
-    <title>Title</title>
+    <title>Customer View</title>
 </head>
 <body>
-<div align="center">
-    <h1>You have logged in successfully</h1>
-    <h1>Welcome  <%= username%> </h1>
-</div>
+    <h1>WELCOME CUSTOMER: <%= username %></h1>
+    <li>
+        <ul><a href="${pageContext.request.contextPath}/dish">Finding Dish</a></ul>
+        <ul><a href="#">Order Table</a></ul>
+        <ul><a href="#">Order Dish</a></ul>
+    </li>
 </body>
 </html>

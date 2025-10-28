@@ -36,12 +36,18 @@ public class LoginServlet extends HttpServlet {
 
         try{
             if(loginDAO.validate(loginBean)) {
-                // SUCCESS: FORWARD to the secured JSP
-                request.getRequestDispatcher("loginsuccess.jsp").forward(request, response);
+                //Get the current session (create one if it doesn't exit)
+                HttpSession session = request.getSession();
+
+                //Store authentication info in session
+                session.setAttribute("username", username);
+                session.setAttribute("isAuthenticated", true);
+
+                response.sendRedirect("customerView.jsp");
             } else {
                 // FAILURE: Set an error message and FORWARD back to the login page
                 request.setAttribute("error", "Invalid username or password."); // Set error message
-                request.getRequestDispatcher("login.jsp").forward(request, response);
+                    request.getRequestDispatcher("login.jsp").forward(request, response);
 
                 // *** DO NOT USE response.sendRedirect("login.jsp"); here ***
                 // It's bad practice, you lose the error message, and the path is likely wrong.

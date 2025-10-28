@@ -4,6 +4,8 @@
     <option name="state">
       <map>
         <entry key="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/common/login.jsp" value="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/common" />
+        <entry key="file://$PROJECT_DIR$/src/main/webapp/addComboView.jsp" value="file://$PROJECT_DIR$/src/main/webapp" />
+        <entry key="file://$PROJECT_DIR$/src/main/webapp/findingDishView.jsp" value="file://$PROJECT_DIR$/src/main/webapp" />
       </map>
     </option>
   </component>
