@@ -229,5 +229,6 @@ public class ComboServlet extends HttpServlet {
                 }
             }
         }
+        doGet(request, response);
     }
 }

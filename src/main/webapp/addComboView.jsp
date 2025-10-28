@@ -208,5 +208,26 @@
     // Code hiển thị ban đầu đã được xử lý bằng JSTL (c:forEach)
 </script>
 
+<c:if test="${not empty successMessage}">
+    <script>
+        // Hiển thị popup thông báo
+        alert("${successMessage}");
+
+        // Quay lại trang addComboView.jsp sau khi bấm OK hoặc 5s (phòng trường hợp người không bấm OK)
+        setTimeout(function() {
+            window.location.href = "combo";
+        }, 5000);
+    </script>
+</c:if>
+
+<c:if test="${not empty errorMessage}">
+    <script>
+        alert("${errorMessage}");
+        setTimeout(function() {
+            window.location.href = "combo";
+        }, 5000);
+    </script>
+</c:if>
+
 </body>
 </html>
