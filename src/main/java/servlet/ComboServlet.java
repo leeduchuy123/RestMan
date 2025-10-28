@@ -1,6 +1,7 @@
 package servlet;
 
 import DAO.ComboDAO;
+import DAO.DAO;
 import DAO.DishDAO;
 import Model.Combo;
 import Model.ComboDish;
@@ -14,7 +15,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.*;
 
 @WebServlet(name="ComboServlet", urlPatterns = {"/combo"})
@@ -147,12 +148,86 @@ public class ComboServlet extends HttpServlet {
             return;
         }
 
-        // 1. Tạo đối tượng Combo
-        Combo newCombo = new Combo();
-        newCombo.setComboname(comboName);
-        newCombo.setComboprice(comboPrice);
+        Connection conn = null;
+        try {
+            //Lay connection chung tu dao -> tranh bi trung lap
+            conn = comboDAO.getConnection();
+            conn.setAutoCommit(false); // bắt đầu transaction
 
-        Combo savedCombe = comboDAO.saveCombo(newCombo);
-        System.out.println("Save combo successful");
+            // 🔹 2. Lưu combo trước
+            Combo newCombo = new Combo();
+            newCombo.setComboname(comboName);
+            newCombo.setComboprice(comboPrice);
+
+            Combo savedCombo = null;
+            String insertComboSQL = "INSERT INTO tblcombo (comboname, comboprice, description) VALUES (?, ?, ?)";
+            try (PreparedStatement pstmt = conn.prepareStatement(insertComboSQL, Statement.RETURN_GENERATED_KEYS)) {
+                pstmt.setString(1, newCombo.getComboname());
+                pstmt.setFloat(2, newCombo.getComboprice());
+                pstmt.setString(3, newCombo.getDescription());
+                int affectedRows = pstmt.executeUpdate();
+
+                if (affectedRows == 0) {
+                    throw new SQLException("Không thể thêm Combo — không có dòng nào bị ảnh hưởng.");
+                }
+
+                try (ResultSet rs = pstmt.getGeneratedKeys()) {
+                    if (rs.next()) {
+                        int generatedId = rs.getInt(1);
+                        newCombo.setId(generatedId);
+                        savedCombo = newCombo;
+                    } else {
+                        throw new SQLException("Không thể lấy ID combo vừa được sinh ra.");
+                    }
+                }
+            }
+
+            // 🔹 3. Lưu từng món ăn vào tblcombodish
+            String insertComboDishSQL = "INSERT INTO tblcombodish (quantity, tblDishId, tblComboId) VALUES (?, ?, ?)";
+            try (PreparedStatement pstmt = conn.prepareStatement(insertComboDishSQL)) {
+                for (Map.Entry<Dish, Integer> entry : selectedDishesMap.entrySet()) {
+                    Dish dish = entry.getKey();
+                    int quantity = entry.getValue();
+
+                    pstmt.setInt(1, quantity);
+                    pstmt.setInt(2, dish.getId());
+                    pstmt.setInt(3, savedCombo.getId());
+                    pstmt.addBatch();
+                }
+
+                int[] results = pstmt.executeBatch();
+                for (int res : results) {
+                    if (res == PreparedStatement.EXECUTE_FAILED) {
+                        throw new SQLException("Lỗi khi thêm món ăn vào combo.");
+                    }
+                }
+            }
+
+            // 🔹 4. Commit transaction
+            conn.commit();
+
+            // 🔹 5. Dọn dẹp session & gửi thông báo
+            session.removeAttribute(SELECTED_DISHES_SESSION);
+            request.setAttribute("successMessage", "Tạo Combo thành công!");
+        } catch (Exception e) {
+            if(conn != null) {
+                try {
+                    conn.rollback();
+                } catch (SQLException ex) {
+                    System.out.println("Rollback thất bại: " + ex.getMessage());
+                }
+            }
+
+            request.setAttribute("errorMessage", "Lỗi khi tạo combo: " + e.getMessage());
+        } finally {
+            if (conn != null) {
+                try {
+                    conn.setAutoCommit(true);
+                    conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 }
