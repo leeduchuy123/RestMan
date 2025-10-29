@@ -90,4 +90,40 @@ public class ComboDAO extends DAO{
         return combo;
     }
 
+    public boolean deleteComboById(int comboId) {
+        boolean deleted = false;
+
+        String deleteComboDishSQL = "DELETE FROM tblcombodish WHERE tblComboId = ?";
+        String deleteComboSQL = "DELETE FROM tblcombo WHERE id = ?";
+
+        try (Connection connection = getConnection()) {
+            connection.setAutoCommit(false); // Bắt đầu transaction
+
+            // Xóa các bản ghi trong bảng combodish trước
+            try (PreparedStatement pstmt1 = connection.prepareStatement(deleteComboDishSQL)) {
+                pstmt1.setInt(1, comboId);
+                pstmt1.executeUpdate();
+            }
+
+            // Sau đó xóa combo chính
+            try (PreparedStatement pstmt2 = connection.prepareStatement(deleteComboSQL)) {
+                pstmt2.setInt(1, comboId);
+                int affected = pstmt2.executeUpdate();
+
+                if (affected > 0) {
+                    deleted = true;
+                }
+            }
+
+            connection.commit();
+        } catch (SQLException e) {
+            System.out.println("Lỗi khi xóa combo (ID = " + comboId + "): " + e.getMessage());
+            e.printStackTrace();
+            deleted = false;
+        }
+
+        return deleted;
+    }
+
+
 }

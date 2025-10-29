@@ -35,15 +35,24 @@ public class LoginServlet extends HttpServlet {
         LoginBean loginBean = new LoginBean(username, password);
 
         try{
-            if(loginDAO.validate(loginBean)) {
+            String ans = loginDAO.validate(loginBean);
+            if(!"unvalidate".equals(ans)) {
                 //Get the current session (create one if it doesn't exit)
                 HttpSession session = request.getSession();
 
                 //Store authentication info in session
                 session.setAttribute("username", username);
                 session.setAttribute("isAuthenticated", true);
+                session.setAttribute("role", ans);
 
-                response.sendRedirect("customerView.jsp");
+                if("MANAGER".equals(ans)) {
+                    response.sendRedirect("managerView.jsp");
+                } else if("CUSTOMER".equals(ans)) {
+                    response.sendRedirect("customerView.jsp");
+                }
+
+//                String sessionAuth = session.getAttribute("username").toString();
+//                System.out.println(sessionAuth);
             } else {
                 // FAILURE: Set an error message and FORWARD back to the login page
                 request.setAttribute("error", "Invalid username or password."); // Set error message

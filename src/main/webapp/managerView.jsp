@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%
+    // LOGIC: Giữ nguyên logic kiểm tra session
     HttpSession currentSession = request.getSession(false);
 
     if(currentSession == null || currentSession.getAttribute("username") == null) {
@@ -9,16 +10,22 @@
 
     String username = (String) currentSession.getAttribute("username");
 %>
+<!DOCTYPE html>
 <html>
 <head>
-    <title>Customer View</title>
+    <meta charset="UTF-8">
+    <title>Manager View</title>
     <style>
-        /* CSS Chung cho Menu View */
+        /* CSS Chung cho Menu View (Lấy từ Customer View) */
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #f4f7f6;
             margin: 0;
             padding: 0;
+            /* Đảm bảo nội dung nằm dưới Header */
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
 
         .main-content {
@@ -26,6 +33,7 @@
             display: flex;
             flex-direction: column;
             align-items: center; /* Căn giữa nội dung */
+            flex-grow: 1; /* Cho phép vùng này chiếm hết không gian còn lại */
         }
 
         h1.view-title {
@@ -36,7 +44,7 @@
         }
 
         /* Menu container */
-        .customer-menu {
+        .manager-menu {
             list-style: none; /* Xóa gạch đầu dòng */
             padding: 0;
             margin: 0;
@@ -65,23 +73,30 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); /* Bóng rõ hơn khi hover */
             transform: translateY(-2px); /* Hiệu ứng nổi nhẹ */
         }
+
     </style>
 </head>
 <body>
 <jsp:include page="header.jsp" />
 
 <div class="main-content">
-    <h1 class="view-title">Customer View</h1>
+    <h1 class="view-title">Manager View</h1>
 
-    <ul class="customer-menu">
+    <ul class="manager-menu">
         <li class="menu-item">
             <a href="${pageContext.request.contextPath}/dish">Finding Dish</a>
         </li>
         <li class="menu-item">
-            <a href="#">Order Table</a>
+            <a href="#">View Statis</a>
         </li>
         <li class="menu-item">
-            <a href="#">Order Dish</a>
+            <a href="#">Manage Dish</a>
+        </li>
+        <li class="menu-item">
+            <a href="${pageContext.request.contextPath}/combo?action=manage_combo">Manage Combo</a>
+        </li>
+        <li class="menu-item">
+            <a href="${pageContext.request.contextPath}/logout">Logout</a>
         </li>
     </ul>
 </div>

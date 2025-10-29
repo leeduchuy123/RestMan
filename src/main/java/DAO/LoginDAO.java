@@ -8,28 +8,42 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class LoginDAO extends DAO{
-    public boolean validate(LoginBean loginBean) throws ClassNotFoundException{
+    public String validate(LoginBean loginBean) throws ClassNotFoundException{
         Connection conn = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
 
-        boolean status = false;
+        String result = "unvalidate";
 
         try {
             conn = getConnection();
-            pstmt = conn.prepareStatement("select * from tblmember where username = ? and password = ?");
+            String sql = "SELECT m.username, s.role FROM tblmember m LEFT JOIN tblstaff s ON m.id = s.tblMemberid\n" +
+                    "            WHERE m.username = ? AND m.password = ?";
+            pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, loginBean.getUsername());
             pstmt.setString(2, loginBean.getPassword());
 
             System.out.println(pstmt);
             rs = pstmt.executeQuery();
 
-            status = rs.next();
+            if(rs.next()) {
+                String role = rs.getString("role");
+                System.out.println(role);
+
+                if(role == null || role.isEmpty()) {
+                    result = "CUSTOMER";
+                } else if ("MANAGER".equalsIgnoreCase(role)){
+                    result = "MANAGER";
+                } else {
+                    result = role;
+                }
+            }
         } catch (SQLException e) {
             System.out.println("Cannot check login the user: " + loginBean.getUsername());
             e.printStackTrace();
+            result = "unvalidate";
         }
 
-        return status;
+        return result;
     }
 }

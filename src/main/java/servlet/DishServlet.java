@@ -42,7 +42,7 @@ public class DishServlet extends HttpServlet {
 
         boolean isAjax = "true".equals(request.getParameter("ajax_request"));
 
-        String targetJSP = "findingDishView.jsp";
+        String targetJSP;
 
         if(searchToken != null) {
             ArrayList<Dish> dishList = dishDAO.getDishList(searchToken.toLowerCase());
@@ -64,6 +64,10 @@ public class DishServlet extends HttpServlet {
             //If no search token, pass empty string to show all dishes
             handleDishSearch(request, "");
             targetJSP = "findingDishView.jsp";
+
+            //debug
+            String sessionAuth = request.getSession().getAttribute("username").toString();
+            System.out.println("This is the user: " + sessionAuth);
         }
 
         //Forward the request and response

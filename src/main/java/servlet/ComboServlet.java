@@ -3,6 +3,7 @@ package servlet;
 import DAO.ComboDAO;
 import DAO.DAO;
 import DAO.DishDAO;
+import DAO.ComboDishDAO;
 import Model.Combo;
 import Model.ComboDish;
 import Model.Dish;
@@ -22,6 +23,7 @@ import java.util.*;
 public class ComboServlet extends HttpServlet {
     private ComboDAO comboDAO;
     private DishDAO dishDAO;
+    private ComboDishDAO comboDishDAO;
 
     // Tên thuộc tính Session để lưu danh sách món ăn tạm thời
     private static final String SELECTED_DISHES_SESSION = "selectedDishList";
@@ -31,6 +33,7 @@ public class ComboServlet extends HttpServlet {
         try {
             comboDAO = new ComboDAO();
             dishDAO = new DishDAO();
+            comboDishDAO = new ComboDishDAO();
         } catch (ClassNotFoundException | SQLException e) {
             System.out.println("Failed to init ComboServlet when create DAOs");
             throw new ServletException("Failed to initialize DAOs.", e);
@@ -54,13 +57,18 @@ public class ComboServlet extends HttpServlet {
         }
 
         if(action == null) {
-            //Hien thi trang lan dau: target van la addComboView.jsp
+            //Hien thi trang lan dau: target van la manageCombo.jsp
+            handleManageCombo(request, response);
+            return;
         } else if(action.equals("add_dish")) {
             handleAddDishToCombo(request, selectedDishes);
         } else if(action.equals("remove_dish")) {
             handleRemoveDishFromCombo(request, selectedDishes);
         } else if(action.equals("update_quantity")) {
             handleUpdateDishQuantity(request, selectedDishes);
+        } else if(action.equals("manage_combo")) {
+            handleManageCombo(request, response);
+            return;
         }
 
         request.setAttribute("selectedDishMap", selectedDishes); // Truyền lại Map sang JSP
@@ -75,10 +83,42 @@ public class ComboServlet extends HttpServlet {
 
         if(action != null && action.equals("add")) {
             handleAddCombo(request, response);
-        } else {
+        } else if ("delete".equals(action)){
+            handleDeleteCombo(request, response);
+        }else {
             doGet(request, response);
         }
 
+    }
+
+    // --- Hiển thị danh sách Combo ---
+    private void handleManageCombo(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        List<Combo> comboList = comboDAO.getAllCombo();
+        request.setAttribute("comboList", comboList);
+        RequestDispatcher dispatcher = request.getRequestDispatcher("manageComboView.jsp");
+        dispatcher.forward(request, response);
+    }
+
+    private void handleDeleteCombo(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        try {
+            int comboId = Integer.parseInt(request.getParameter("comboId"));
+
+            boolean success = comboDAO.deleteComboById(comboId);
+
+            if (success) {
+                request.setAttribute("successMessage", "Xóa combo thành công!");
+            } else {
+                request.setAttribute("errorMessage", "Không thể xóa combo (có thể combo không tồn tại).");
+            }
+
+        } catch (NumberFormatException e) {
+            request.setAttribute("errorMessage", "ID combo không hợp lệ.");
+        }
+
+        // Sau khi xóa xong → hiển thị lại danh sách combo
+        handleManageCombo(request, response);
     }
 
     // --- Logic Xử lý Món ăn trong Combo (Session) ---
@@ -159,49 +199,16 @@ public class ComboServlet extends HttpServlet {
             newCombo.setComboname(comboName);
             newCombo.setComboprice(comboPrice);
 
-            Combo savedCombo = null;
-            String insertComboSQL = "INSERT INTO tblcombo (comboname, comboprice, description) VALUES (?, ?, ?)";
-            try (PreparedStatement pstmt = conn.prepareStatement(insertComboSQL, Statement.RETURN_GENERATED_KEYS)) {
-                pstmt.setString(1, newCombo.getComboname());
-                pstmt.setFloat(2, newCombo.getComboprice());
-                pstmt.setString(3, newCombo.getDescription());
-                int affectedRows = pstmt.executeUpdate();
+            Combo savedCombo = comboDAO.saveCombo(newCombo);
 
-                if (affectedRows == 0) {
-                    throw new SQLException("Không thể thêm Combo — không có dòng nào bị ảnh hưởng.");
-                }
-
-                try (ResultSet rs = pstmt.getGeneratedKeys()) {
-                    if (rs.next()) {
-                        int generatedId = rs.getInt(1);
-                        newCombo.setId(generatedId);
-                        savedCombo = newCombo;
-                    } else {
-                        throw new SQLException("Không thể lấy ID combo vừa được sinh ra.");
-                    }
-                }
+            
+            for (Map.Entry<Dish, Integer> entry : selectedDishesMap.entrySet()) {
+                ComboDish comboDish = new ComboDish(entry.getValue(), entry.getKey().getId(), savedCombo.getId());
+                
+                ComboDish savedCoDish = comboDishDAO.addDishToCombo(comboDish);
             }
 
-            // 🔹 3. Lưu từng món ăn vào tblcombodish
-            String insertComboDishSQL = "INSERT INTO tblcombodish (quantity, tblDishId, tblComboId) VALUES (?, ?, ?)";
-            try (PreparedStatement pstmt = conn.prepareStatement(insertComboDishSQL)) {
-                for (Map.Entry<Dish, Integer> entry : selectedDishesMap.entrySet()) {
-                    Dish dish = entry.getKey();
-                    int quantity = entry.getValue();
 
-                    pstmt.setInt(1, quantity);
-                    pstmt.setInt(2, dish.getId());
-                    pstmt.setInt(3, savedCombo.getId());
-                    pstmt.addBatch();
-                }
-
-                int[] results = pstmt.executeBatch();
-                for (int res : results) {
-                    if (res == PreparedStatement.EXECUTE_FAILED) {
-                        throw new SQLException("Lỗi khi thêm món ăn vào combo.");
-                    }
-                }
-            }
 
             // 🔹 4. Commit transaction
             conn.commit();
