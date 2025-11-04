@@ -68,7 +68,7 @@
     </style>
 </head>
 <body>
-<jsp:include page="header.jsp" />
+<jsp:include page="../common/header.jsp" />
 
 <div class="main-content">
     <h1 class="view-title">Customer View</h1>

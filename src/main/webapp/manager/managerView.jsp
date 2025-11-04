@@ -77,7 +77,7 @@
     </style>
 </head>
 <body>
-<jsp:include page="header.jsp" />
+<jsp:include page="../common/header.jsp" />
 
 <div class="main-content">
     <h1 class="view-title">Manager View</h1>
@@ -96,7 +96,7 @@
             <a href="${pageContext.request.contextPath}/combo?action=manage_combo">Manage Combo</a>
         </li>
         <li class="menu-item">
-            <a href="${pageContext.request.contextPath}/logout">Logout</a>
+            <a href="#">Logout</a>
         </li>
     </ul>
 </div>

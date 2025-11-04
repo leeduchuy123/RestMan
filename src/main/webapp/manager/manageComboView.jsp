@@ -171,13 +171,13 @@
     </style>
 </head>
 <body>
-<jsp:include page="header.jsp" />
+<jsp:include page="../common/header.jsp" />
 
 <div class="content-wrapper">
     <h1 class="view-title">Manage Combo View</h1>
 
     <div class="top-actions">
-        <button type="button" class="add-combo-btn" onclick="window.location.href='addComboView.jsp';">Add combo</button>
+        <button type="button" class="add-combo-btn" onclick="window.location.href='<%=request.getContextPath()%>/manager/addComboView.jsp';">Add combo</button>
     </div>
 
     <h2 class="list-title">List of Combo</h2>
@@ -225,7 +225,7 @@
     </table>
 
     <div class="return-area">
-        <form action="managerView.jsp" method="get">
+        <form action="<%=request.getContextPath()%>/manager/managerView.jsp" method="get">
             <button type="submit">Return</button>
         </form>
     </div>

@@ -113,7 +113,7 @@
     </style>
 </head>
 <body>
-<jsp:include page="header.jsp" />
+<jsp:include page="../common/header.jsp" />
 
 <div class="content-wrapper">
     <h1> Dish Detail View </h1>
@@ -145,7 +145,7 @@
     </div>
 
     <div class="return-area">
-        <form action="FindingDishView.jsp" method="GET">
+        <form action="<%=request.getContextPath()%>/customer/findingDishView.jsp" method="GET">
             <button type="submit">Return</button>
         </form>
     </div>

@@ -7,11 +7,20 @@
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #f4f7f6; /* Màu nền nhẹ nhàng */
+            margin: 0;
+            /* Đảm bảo nội dung nằm dưới Header */
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .main-content-wrapper {
+            flex-grow: 1; /* Quan trọng: Khiến nó lấp đầy phần không gian còn lại */
+
+            /* Áp dụng logic căn giữa của bạn VÀO ĐÂY thay vì body */
             display: flex;
             justify-content: center; /* Căn giữa theo chiều ngang */
             align-items: center; /* Căn giữa theo chiều dọc */
-            min-height: 100vh;
-            margin: 0;
         }
 
         .login-container {
@@ -85,24 +94,26 @@
     </style>
 </head>
 <body>
-<jsp:include page="header.jsp" />
+<jsp:include page="/common/header.jsp"/>
 
-<div class="login-container">
-    <h1>The Restaurant manager</h1>
-    <h2 class="subtitle">Login Form</h2>
-    <form action="<%=request.getContextPath()%>/login" method="post">
-        <div class="input-group">
-            <label for="username">Username</label>
-            <input type="text" id="username" name="username" required />
-        </div>
-        <div class="input-group">
-            <label for="password">Password</label>
-            <input type="password" id="password" name="password" required />
-        </div>
-        <div class="submit-button-area">
-            <input type="submit" value="Login" />
-        </div>
-    </form>
-</div>
+<main class="main-content-wrapper">
+    <div class="login-container">
+        <h1>The Restaurant manager</h1>
+        <h2 class="subtitle">Login Form</h2>
+        <form action="<%=request.getContextPath()%>/login" method="post">
+            <div class="input-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required />
+            </div>
+            <div class="input-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required />
+            </div>
+            <div class="submit-button-area">
+                <input type="submit" value="Login" />
+            </div>
+        </form>
+    </div>
+</main>
 </body>
 </html>

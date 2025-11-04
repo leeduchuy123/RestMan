@@ -165,14 +165,14 @@
     </style>
 </head>
 <body>
-<jsp:include page="header.jsp" />
+<jsp:include page="../common/header.jsp" />
 
 <div class="content-wrapper">
 
     <h1 class="view-title">Finding Dish View</h1>
 
     <div class="search-area">
-        <form action="dish" method="GET" style="display: flex; gap: 10px; width: 100%; justify-content: flex-end;">
+        <form action="<%=request.getContextPath()%>/dish" method="GET" style="display: flex; gap: 10px; width: 100%; justify-content: flex-end;">
             <input type="text" name="searching_token" placeholder="Tìm kiếm tên món ăn..." />
             <button type="submit">Finding</button>
         </form>
@@ -210,7 +210,7 @@
     </table>
 
     <div class="return-area">
-        <form action="customerView.jsp" method="GET">
+        <form action="<%=request.getContextPath()%>/manager/managerView.jsp" method="GET">
             <button type="submit">Return</button>
         </form>
     </div>

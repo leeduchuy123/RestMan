@@ -1,6 +1,6 @@
 package servlet;
 
-import DAO.LoginDAO;
+import DAO.UserDAO;
 import Model.LoginBean;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -14,10 +14,10 @@ import java.io.IOException;
 @WebServlet("/login")
 public class LoginServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
-    private LoginDAO loginDAO;
+    private UserDAO userDAO;
 
     public void init() {
-        loginDAO = new LoginDAO();
+        userDAO = new UserDAO();
     }
 
     @Override
@@ -26,7 +26,7 @@ public class LoginServlet extends HttpServlet {
 
         // The JSP path must be relative to the webapp folder.
         // It points to /webapp/common/login.jsp
-        request.getRequestDispatcher("login.jsp").forward(request, response);
+        request.getRequestDispatcher("/common/login.jsp").forward(request, response);
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -35,7 +35,7 @@ public class LoginServlet extends HttpServlet {
         LoginBean loginBean = new LoginBean(username, password);
 
         try{
-            String ans = loginDAO.validate(loginBean);
+            String ans = userDAO.checkLogin(loginBean);
             if(!"unvalidate".equals(ans)) {
                 //Get the current session (create one if it doesn't exit)
                 HttpSession session = request.getSession();
@@ -46,9 +46,9 @@ public class LoginServlet extends HttpServlet {
                 session.setAttribute("role", ans);
 
                 if("MANAGER".equals(ans)) {
-                    response.sendRedirect("managerView.jsp");
+                    response.sendRedirect(request.getContextPath() + "/manager/managerView.jsp");
                 } else if("CUSTOMER".equals(ans)) {
-                    response.sendRedirect("customerView.jsp");
+                    response.sendRedirect( request.getContextPath() + "/customer/customerView.jsp");
                 }
 
 //                String sessionAuth = session.getAttribute("username").toString();
@@ -56,7 +56,7 @@ public class LoginServlet extends HttpServlet {
             } else {
                 // FAILURE: Set an error message and FORWARD back to the login page
                 request.setAttribute("error", "Invalid username or password."); // Set error message
-                    request.getRequestDispatcher("login.jsp").forward(request, response);
+                    request.getRequestDispatcher("/common/login.jsp").forward(request, response);
 
                 // *** DO NOT USE response.sendRedirect("login.jsp"); here ***
                 // It's bad practice, you lose the error message, and the path is likely wrong.

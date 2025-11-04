@@ -7,8 +7,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class LoginDAO extends DAO{
-    public String validate(LoginBean loginBean) throws ClassNotFoundException{
+public class UserDAO extends DAO{
+    public String checkLogin(LoginBean loginBean) throws ClassNotFoundException{
         Connection conn = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;

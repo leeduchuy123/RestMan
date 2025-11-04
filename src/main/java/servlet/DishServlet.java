@@ -71,7 +71,7 @@ public class DishServlet extends HttpServlet {
         }
 
         //Forward the request and response
-        RequestDispatcher dispatcher = request.getRequestDispatcher(targetJSP);
+        RequestDispatcher dispatcher = request.getRequestDispatcher("/customer/" + targetJSP);
         dispatcher.forward(request, response);
 
         //dùng requestDispatcher vì request có thể được giữ nguyên, và chuyển tiếp "nội bộ"

@@ -1,7 +1,6 @@
 package servlet;
 
 import DAO.ComboDAO;
-import DAO.DAO;
 import DAO.DishDAO;
 import DAO.ComboDishDAO;
 import Model.Combo;
@@ -72,7 +71,7 @@ public class ComboServlet extends HttpServlet {
         }
 
         request.setAttribute("selectedDishMap", selectedDishes); // Truyền lại Map sang JSP
-        RequestDispatcher dispatcher = request.getRequestDispatcher(targetJSP);
+        RequestDispatcher dispatcher = request.getRequestDispatcher("/manager/" + targetJSP);
         dispatcher.forward(request, response);
     }
 
@@ -96,7 +95,7 @@ public class ComboServlet extends HttpServlet {
             throws ServletException, IOException {
         List<Combo> comboList = comboDAO.getAllCombo();
         request.setAttribute("comboList", comboList);
-        RequestDispatcher dispatcher = request.getRequestDispatcher("manageComboView.jsp");
+        RequestDispatcher dispatcher = request.getRequestDispatcher("/manager/manageComboView.jsp");
         dispatcher.forward(request, response);
     }
 

@@ -198,13 +198,13 @@
     </style>
 </head>
 <body>
-<jsp:include page="header.jsp" />
+<jsp:include page="../common/header.jsp" />
 
 <div class="main-wrapper-container">
     <div class="main-wrapper">
         <h1>Add Combo View</h1>
 
-        <form action="combo" method="POST" id="addComboForm">
+        <form action="<%=request.getContextPath()%>/combo" method="POST" id="addComboForm">
             <input type="hidden" name="action" value="add">
 
             <div class="combo-name-container">
@@ -314,7 +314,7 @@
 
         // Gửi yêu cầu AJAX đến DishServlet
         $.ajax({
-            url: "dish",
+            url: "<%= request.getContextPath()%>/dish",
             type: "GET",
             data: {
                 searching_token: dishName,
@@ -365,30 +365,30 @@
     // 3. Thêm món ăn vào Combo (Gửi Form/AJAX tới ComboServlet để lưu vào Session)
     function addDishToCombo(dishId) {
         // Đơn giản nhất: Gửi một request tới ComboServlet để xử lý logic session
-        window.location.href = "combo?action=add_dish&dishId=" + dishId;
+        window.location.href = "<%=request.getContextPath()%>/combo?action=add_dish&dishId=" + dishId;
     }
 
     // 4. Xóa món ăn khỏi Combo
     function removeDish(dishId) {
-        window.location.href = "combo?action=remove_dish&dishId=" + dishId;
+        window.location.href = "<%=request.getContextPath()%>/combo?action=remove_dish&dishId=" + dishId;
     }
 
     // 5. Cập nhật số lượng món ăn trong Combo
     function updateQuantity(dishId, quantity) {
-        window.location.href = "combo?action=update_quantity&dishId=" + dishId + "&quantity=" + quantity;
+        window.location.href = "<%=request.getContextPath()%>/combo?action=update_quantity&dishId=" + dishId + "&quantity=" + quantity;
     }
     // Logic alert giữ nguyên
     <c:if test="${not empty successMessage}">
     alert("${successMessage}");
     setTimeout(function() {
-        window.location.href = "combo";
+        window.location.href = "<%=request.getContextPath()%>/combo";
     });
     </c:if>
 
     <c:if test="${not empty errorMessage}">
     alert("${errorMessage}");
     setTimeout(function() {
-        window.location.href = "combo";
+        window.location.href = "<%=request.getContextPath()%>/combo";
     });
     </c:if>
 </script>
