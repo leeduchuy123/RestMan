@@ -1,6 +1,6 @@
-package DAO;
+package dao;
 
-import Model.ComboDish;
+import model.ComboDish;
 
 import java.sql.*;
 import java.util.ArrayList;

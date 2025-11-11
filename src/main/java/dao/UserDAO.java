@@ -1,6 +1,6 @@
-package DAO;
+package dao;
 
-import Model.LoginBean;
+import model.LoginBean;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

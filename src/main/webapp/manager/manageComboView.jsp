@@ -1,5 +1,5 @@
 <%@ page import="java.util.List" %>
-<%@ page import="Model.Combo" %>
+<%@ page import="model.Combo" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>

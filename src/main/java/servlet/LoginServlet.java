@@ -1,7 +1,7 @@
 package servlet;
 
-import DAO.UserDAO;
-import Model.LoginBean;
+import dao.UserDAO;
+import model.LoginBean;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;

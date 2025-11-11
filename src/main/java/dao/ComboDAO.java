@@ -1,6 +1,6 @@
-package DAO;
+package dao;
 
-import Model.Combo;
+import model.Combo;
 
 import java.sql.*;
 import java.util.ArrayList;

@@ -1,7 +1,7 @@
 package servlet;
 
-import DAO.DishDAO;
-import Model.Dish;
+import dao.DishDAO;
+import model.Dish;
 import com.google.gson.Gson;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;

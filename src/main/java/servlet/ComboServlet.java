@@ -1,11 +1,11 @@
 package servlet;
 
-import DAO.ComboDAO;
-import DAO.DishDAO;
-import DAO.ComboDishDAO;
-import Model.Combo;
-import Model.ComboDish;
-import Model.Dish;
+import dao.ComboDAO;
+import dao.DishDAO;
+import dao.ComboDishDAO;
+import model.Combo;
+import model.ComboDish;
+import model.Dish;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;

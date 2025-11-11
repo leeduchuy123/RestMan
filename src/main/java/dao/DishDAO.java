@@ -1,6 +1,6 @@
-package DAO;
+package dao;
 
-import Model.Dish;
+import model.Dish;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
